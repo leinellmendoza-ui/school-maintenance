@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+}
+
+enum TicketStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum EquipmentStatus {
+  IN_USE
+  AVAILABLE
+  NEEDS_REPAIR
+}
+
+model User {
+  id           String    @id @default(uuid())
+  fullName     String
+  studentId    String?   @unique
+  email        String    @unique
+  password     String
+  department   String?
+  role         Role      @default(STUDENT)
+  tickets      Ticket[]
+  createdAt    DateTime  @default(now())
+}
+
+model Equipment {
+  id               String          @id @default(uuid())
+  name             String
+  code             String          @unique
+  category         String
+  status           EquipmentStatus @default(AVAILABLE)
+  lastMaintenance  DateTime?
+  tickets          Ticket[]
+}
+
+model Ticket {
+  id             String       @id @default(uuid())
+  ticketNumber   String       @unique
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  equipmentId    String?
+  equipment      Equipment?   @relation(fields: [equipmentId], references: [id])
+  customEquip    String?
+  location       String?
+  description    String
+  priority       String       @default("Low")
+  status         TicketStatus @default(PENDING)
+  cost           Float?
+  assignedTo     String?
+  imageUrl       String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  
+}
+
+model MaintenanceSchedule {
+  id           String   @id @default(uuid())
+  title        String
+  date         DateTime
+  time         String
+  location     String
+  createdAt    DateTime @default(now())
+}
