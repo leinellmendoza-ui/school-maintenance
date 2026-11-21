@@ -8,7 +8,7 @@ import { authenticate, isAdmin, AuthRequest } from './middleware';
 const app = express();
 
 // Allow requests from your Vercel frontend (or localhost during development)
-
+app.use(cors());
 
 
 app.use(express.json());
