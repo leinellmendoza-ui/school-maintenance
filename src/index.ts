@@ -9,7 +9,7 @@ const app = express();
 
 // Allow requests from your Vercel frontend (or localhost during development)
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: ['http://localhost:5173', 'http://localhost:5174'],
   credentials: true
 }));
 
