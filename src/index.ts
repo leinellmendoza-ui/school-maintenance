@@ -9,9 +9,23 @@ const app = express();
 
 // Allow requests from your Vercel frontend (or localhost during development)
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174'],
-  credentials: true
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      'http://localhost:5173', 
+      'http://localhost:5174',
+      'http://127.0.0.1:5174' // Adding this covers another common local variant
+    ];
+    
+    // Allow requests with no origin (like mobile apps or curl) or if the origin is in the list
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true // Keep this if you are using cookies or auth headers
 }));
+
 
 app.use(express.json());
 
