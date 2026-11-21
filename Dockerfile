@@ -15,8 +15,9 @@ RUN npm install
 COPY . .
 
 # --- THE FIX ---
-# Provide a dummy URL so Prisma can generate during the build phase
+# Provide dummy URLs so Prisma can generate during the build phase
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+ENV DATABASE_URL_UNPOOLED="postgresql://dummy:dummy@localhost:5432/dummy"
 
 # Generate the Prisma client
 RUN npx prisma generate
