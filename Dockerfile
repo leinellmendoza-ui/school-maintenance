@@ -1,23 +1,28 @@
 FROM node:20-alpine
 
-# Install OpenSSL (needed for Prisma)
+# Install OpenSSL for Prisma
 RUN apk add --no-cache openssl
 
 WORKDIR /app
 
-# Copy package files first for better caching
+# Copy package files
 COPY package*.json ./
 
-# Install dependencies (ignore scripts to avoid premature prisma generate)
-RUN npm install --ignore-scripts
+# Install dependencies
+RUN npm install
 
-# Copy the rest of the app
+# Copy the rest of your code
 COPY . .
 
-# Generate Prisma Client (now that schema.prisma is available)
+# --- THE FIX ---
+# Provide a dummy URL so Prisma can generate during the build phase
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+
+# Generate the Prisma client
 RUN npx prisma generate
+# ----------------
 
 EXPOSE 8080
 
-# Start the app with the correct path for Linux
+# Start the app
 CMD ["npx", "tsx", "src/index.ts"]
